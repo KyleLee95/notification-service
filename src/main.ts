@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import { messageRoutes } from "./routes/message";
+import { conversationRoutes } from "./routes/conversation";
 const server = Fastify({
   logger: true,
 });
@@ -12,6 +13,7 @@ async function main() {
   });
 
   server.register(messageRoutes, { prefix: "/api/messages" });
+  server.register(conversationRoutes, { prefix: "/api/conversations" });
 
   server.listen({ port: PORT as number }, (err, address) => {
     if (err) {
