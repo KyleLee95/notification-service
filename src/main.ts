@@ -19,7 +19,7 @@ async function main() {
 
   server.register(messageRoutes, { prefix: "/api/messages" });
   server.register(conversationRoutes, { prefix: "/api/conversations" });
-  server.register(messageQueueRoutes, { prefix: "/api/conversations" });
+  server.register(messageQueueRoutes, { prefix: "/api/mq" });
 
   server.listen({ port: PORT as number }, (err, address) => {
     if (err) {

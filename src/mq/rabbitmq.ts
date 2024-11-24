@@ -40,18 +40,20 @@ export async function consumeMessages(
 export const initRabbitMq = async () => {
   await connectToRabbitMQ();
 
-  consumeMessages("support-messages", async (message: any) => {
-    console.log("Saving message to DB:", message);
+  publishMessage("support-messages", "test");
 
-    await prisma.message.create({
-      data: {
-        content: message.content,
-        senderId: message.userId,
-        recipientId: message.adminId,
-        messageChainId: 1, // Example: Link to a conversation
-      },
-    });
+  // consumeMessages("support-messages", async (message: any) => {
+  //   console.log("Saving message to DB:", message);
 
-    console.log("Message saved to DB");
-  });
+  // await prisma.message.create({
+  //   data: {
+  //     content: message.content,
+  //     senderId: message.userId,
+  //     recipientId: message.adminId,
+  //     messageChainId: 1, // Example: Link to a conversation
+  //   },
+  // });
+
+  //   console.log("Message saved to DB");
+  // });
 };

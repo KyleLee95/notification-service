@@ -1,6 +1,5 @@
 import { type FastifyInstance } from "fastify";
 import { publishMessage, consumeMessages } from "../mq/rabbitmq";
-import prisma from "../db";
 
 export const messageQueueRoutes = async (router: FastifyInstance) => {
   router.post("/send-message", async (request, reply) => {
