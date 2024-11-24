@@ -1,49 +1,27 @@
 import Fastify from "fastify";
-
-const fastify = Fastify({
+import { messageRoutes } from "./routes/message";
+const server = Fastify({
   logger: true,
 });
 
-async function startServer() {
+async function main() {
   const PORT = process.env.PORT || 3001;
 
-  fastify.route({
-    method: "GET",
-    url: "/",
-    schema: {
-      // request needs to have a querystring with a `name` parameter
-      querystring: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-        },
-        required: ["name"],
-      },
-      // the response needs to be an object with an `hello` property of type 'string'
-      response: {
-        200: {
-          type: "object",
-          properties: {
-            hello: { type: "string" },
-          },
-        },
-      },
-    },
-    // this function is executed for every request before the handler is executed
-    preHandler: async (request, reply) => {
-      // E.g. check authentication
-    },
-    handler: async (request, reply) => {
-      return { hello: "world" };
-    },
+  server.get("/", (request, reply) => {
+    reply.send({ hello: "world" });
   });
 
-  try {
-    await fastify.listen({ port: PORT as number });
-  } catch (err) {
-    fastify.log.error(err);
-    process.exit(1);
-  }
+  server.register(messageRoutes, { prefix: "/api/messages" });
+
+  server.listen({ port: PORT as number }, (err, address) => {
+    if (err) {
+      server.log.error(err);
+      process.exit(1);
+    }
+
+    console.log(`Server started at ${address}`);
+  });
 }
 
-startServer();
+main();
+export default server;

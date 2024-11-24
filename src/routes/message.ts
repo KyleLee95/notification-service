@@ -1,6 +1,6 @@
 import { type FastifyInstance } from "fastify";
 
-export async function productRoutes(router: FastifyInstance) {
+export async function messageRoutes(router: FastifyInstance) {
   router.get("/", async (request, reply) => {
     return { message: "List of products" };
   });
