@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import { messageRoutes } from "./routes/message";
 import { conversationRoutes } from "./routes/conversation";
+
 const server = Fastify({
   logger: true,
 });

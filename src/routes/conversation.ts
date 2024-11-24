@@ -6,13 +6,6 @@ export const conversationRoutes = async (router: FastifyInstance) => {
   router.get("/", async (request, reply) => {
     const query = request.query as { userId?: string };
 
-    const newConversation = await prisma.conversation.create({
-      data: {
-        title: "Support Chat",
-        user: { connect: { id: 1 } }, // Link to a user (customer or admin)
-      },
-    });
-
     if (!query.userId) {
       return reply
         .status(400)
@@ -27,6 +20,13 @@ export const conversationRoutes = async (router: FastifyInstance) => {
     if (!body) {
       return reply.status(400).send({ error: "Missing required parameters" });
     }
+
+    const newConversation = await prisma.conversation.create({
+      data: {
+        title: "Support Chat",
+        user: { connect: { id: 1 } }, // Link to a user (customer or admin)
+      },
+    });
 
     return { message: `Product ${name} added` };
   });

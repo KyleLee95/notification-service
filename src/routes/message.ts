@@ -5,7 +5,6 @@ import prisma from "../db";
 export const messageRoutes = async (router: FastifyInstance) => {
   router.get("/", async (request, reply) => {
     const query = request.query as { userId?: string };
-    const messages = prisma.message.findMany({});
 
     if (!query.userId) {
       return reply
@@ -13,6 +12,7 @@ export const messageRoutes = async (router: FastifyInstance) => {
         .send({ error: "Missing userId query parameter" });
     }
 
+    const messages = prisma.message.findMany({});
     return { message: `Fetching messages for userId ${query.userId}` };
   });
 
