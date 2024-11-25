@@ -9,7 +9,7 @@ const server = Fastify({
 });
 
 async function main() {
-  const PORT = process.env.PORT || 3001;
+  const PORT = process.env.PORT || 4001;
   //init connection to rabbitMQ
   await initRabbitMq();
 
@@ -19,9 +19,9 @@ async function main() {
 
   server.register(messageRoutes, { prefix: "/api/notifications/messages" });
   server.register(conversationRoutes, {
-    prefix: "/api/notifcations/conversations",
+    prefix: "/api/notifications/conversations",
   });
-  server.register(messageQueueRoutes, { prefix: "/api/notications/mq" });
+  server.register(messageQueueRoutes, { prefix: "/api/notifications/mq" });
 
   server.listen({ port: PORT as number }, (err, address) => {
     if (err) {
