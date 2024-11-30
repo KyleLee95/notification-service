@@ -1,16 +1,26 @@
 import amqp from "amqplib";
-import prisma from "../db/index";
 
 let connection: amqp.Connection | null = null;
 let channel: amqp.Channel | null = null;
 
+const rabbitmqHost = process.env.RABBITMQ_HOST || "localhost";
+const rabbitmqPort = process.env.RABBITMQ_PORT || "5672";
+const rabbitmqUser = process.env.RABBITMQ_USER || "guest";
+const rabbitmqPassword = process.env.RABBITMQ_PASSWORD || "guest";
+
+const connectionString = `amqp://${rabbitmqUser}:${rabbitmqPassword}@${rabbitmqHost}:${rabbitmqPort}`;
+
 export async function connectToRabbitMQ() {
-  if (!connection) {
-    connection = await amqp.connect("amqp://rabbitmq");
-    channel = await connection.createChannel();
-    console.log("Connected to RabbitMQ");
+  try {
+    if (!connection) {
+      connection = await amqp.connect(connectionString);
+      channel = await connection.createChannel();
+      console.log("Connected to RabbitMQ");
+    }
+    return channel;
+  } catch (error) {
+    console.log("Failed to connect to RabbitMQ:", error);
   }
-  return channel;
 }
 
 export async function publishMessage(queue: string, message: any) {
@@ -40,20 +50,7 @@ export async function consumeMessages(
 export const initRabbitMq = async () => {
   await connectToRabbitMQ();
 
-  publishMessage("support-messages", "test");
-
-  // consumeMessages("support-messages", async (message: any) => {
-  //   console.log("Saving message to DB:", message);
-
-  // await prisma.message.create({
-  //   data: {
-  //     content: message.content,
-  //     senderId: message.userId,
-  //     recipientId: message.adminId,
-  //     messageChainId: 1, // Example: Link to a conversation
-  //   },
-  // });
-
-  //   console.log("Message saved to DB");
-  // });
+  consumeMessages("auction-create", async (eventPayload: any) => {
+    console.log("eventPayload on MQ server", eventPayload);
+  });
 };

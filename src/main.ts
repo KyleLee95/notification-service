@@ -1,6 +1,4 @@
 import Fastify from "fastify";
-import { messageRoutes } from "./routes/message";
-import { conversationRoutes } from "./routes/conversation";
 import { messageQueueRoutes } from "./routes/mq";
 import { initRabbitMq } from "./mq/rabbitmq";
 
@@ -10,17 +8,13 @@ const server = Fastify({
 
 async function main() {
   const PORT = process.env.PORT || 4001;
-  //init connection to rabbitMQ
+  // init connection to rabbitMQ
   await initRabbitMq();
 
   server.get("/", (request, reply) => {
     reply.send({ hello: "world" });
   });
 
-  server.register(messageRoutes, { prefix: "/api/notifications/messages" });
-  server.register(conversationRoutes, {
-    prefix: "/api/notifications/conversations",
-  });
   server.register(messageQueueRoutes, { prefix: "/api/notifications/mq" });
 
   server.listen({ port: PORT as number }, (err, address) => {
