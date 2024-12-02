@@ -1,6 +1,8 @@
 import Fastify from "fastify";
 import { messageQueueRoutes } from "./routes/mq";
 import { startConsumer } from "./mq/consumer";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const server = Fastify({
   logger: true,
@@ -9,7 +11,7 @@ const server = Fastify({
 async function main() {
   const PORT = process.env.PORT || 4001;
   // init connection to rabbitMQ
-  // startConsumer().catch(console.error);
+  startConsumer().catch(console.error);
 
   server.get("/", (request, reply) => {
     reply.send({ hello: "world" });
