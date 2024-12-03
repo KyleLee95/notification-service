@@ -5,10 +5,10 @@
   "main": "./src/main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src/main.ts",
+    "start": "DEV=false POSTGRES_DB=postgres-db tsx watch src/index.ts",
+    "dev": "DEV=true POSTGRES_DB=localhost tsx watch src/index.ts",
     "seed": "tsx prisma/seed.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "tsx watch src/main.ts"
+    "build": "tsc -p tsconfig.json"
   },
   "keywords": [],
   "author": "",
@@ -27,9 +27,9 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.2.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
     "@aws-sdk/client-ses": "^3.699.0",
     "@prisma/client": "5.22.0",
-    "@types/axios": "^0.14.4",
     "amqplib": "^0.10.5",
     "axios": "^1.7.8",
     "dotenv": "^16.4.5",
