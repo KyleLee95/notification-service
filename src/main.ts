@@ -1,5 +1,4 @@
 import Fastify from "fastify";
-import { messageQueueRoutes } from "./routes/mq";
 import { startConsumer } from "./mq/consumer";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -17,7 +16,7 @@ async function main() {
     reply.send({ hello: "world" });
   });
 
-  server.register(messageQueueRoutes, { prefix: "/api/notifications/mq" });
+  startConsumer().catch(console.error);
 
   server.listen({ port: PORT as number }, (err, address) => {
     if (err) {
