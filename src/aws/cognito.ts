@@ -15,9 +15,9 @@ async function findUsersByUserId(userIds: string[]) {
     try {
       const isRealUser = realUsers.includes(userId);
       if (!isRealUser) {
-        console.log("skipping user", userId);
         continue;
       }
+      console.log("matched", userId);
       // Query Cognito by email
       const command = new AdminGetUserCommand({
         UserPoolId: "us-east-2_gyo9HVnEr",
