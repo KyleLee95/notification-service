@@ -1,7 +1,8 @@
 import amqp from "amqplib";
 import { sendEmail } from "../aws/ses";
 import { findUsersByUserId } from "../aws/cognito";
-const rabbitmqHost = process.env.DEV ? "localhost" : process.env.RABBITMQ_HOST;
+const rabbitmqHost =
+  process.env.DEV === "TRUE" ? "localhost" : process.env.RABBITMQ_HOST;
 const connectionString = `amqp://${rabbitmqHost}:5672`;
 
 async function startConsumer() {
@@ -15,18 +16,22 @@ async function startConsumer() {
       exchangeType: "direct",
     },
     {
-      exchange: "auction-exchange",
-      name: "auction-ending-soon-queue",
-      routingKey: "auction.time",
-      exchangeType: "x-delayed-message",
-    },
-    {
       exchange: "notification-exchange",
       name: "new-bid-queue",
       routingKey: "bid.new",
       exchangeType: "direct",
     },
   ];
+
+  // {
+  //   exchange: "auction-exchange",
+  //   name: "auction-ending-soon-queue",
+  //   routingKey: "auction.time",
+  //   exchangeType: "x-delayed-message",
+  // },
+  // channel.publish(exchange, "auction.end", Buffer.from(message), {
+  //   headers: { "x-delay": endTimeDelay },
+  // });
 
   for (const queue of queues) {
     await channel.assertExchange(queue.exchange, queue.exchangeType, {
