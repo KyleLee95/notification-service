@@ -21,17 +21,13 @@ async function startConsumer() {
       routingKey: "bid.new",
       exchangeType: "direct",
     },
+    {
+      exchange: "auction-exchange",
+      name: "auction-ending-soon-queue",
+      routingKey: "auction.time",
+      exchangeType: "x-delayed-message",
+    },
   ];
-
-  // {
-  //   exchange: "auction-exchange",
-  //   name: "auction-ending-soon-queue",
-  //   routingKey: "auction.time",
-  //   exchangeType: "x-delayed-message",
-  // },
-  // channel.publish(exchange, "auction.end", Buffer.from(message), {
-  //   headers: { "x-delay": endTimeDelay },
-  // });
 
   for (const queue of queues) {
     await channel.assertExchange(queue.exchange, queue.exchangeType, {
