@@ -13,8 +13,8 @@ async function main() {
   const PORT = process.env.PORT || 4001;
 
   startConsumer().catch(console.error);
-  server.get("/", (request, reply) => {
-    reply.send({ hello: "world" });
+  server.get("/healthcheck", (request, reply) => {
+    reply.send({ hello: "world" }).status(200);
   });
 
   server.listen({ port: PORT as number }, (err, address) => {

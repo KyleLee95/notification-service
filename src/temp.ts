@@ -1,8 +1,9 @@
 import amqp from "amqplib";
-import { sendEmail } from "../aws/ses";
-import { findUsersByUserId } from "../aws/cognito";
-const rabbitmqHost = process.env.DEV ? "localhost" : process.env.RABBITMQ_HOST;
-const connectionString = `amqp://${rabbitmqHost}:5672`;
+import { sendEmail } from "./aws/ses";
+import { findUsersByUserId } from "./aws/cognito";
+const rabbitmqHost = process.env.RABBITMQ_HOST || "localhost";
+const connectionString = `amqp://rabbitmq:5672`;
+// const connectionString = `amqp://guest:guest@rabbitmq:5672`;
 
 async function startConsumer() {
   const connection = await amqp.connect(connectionString);
@@ -86,3 +87,5 @@ async function startConsumer() {
   }
 }
 export { startConsumer };
+
+///
