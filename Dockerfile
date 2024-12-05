@@ -14,8 +14,6 @@ RUN npm install
 COPY . .
 COPY .env .
 
-# Generate Prisma client
-RUN npx prisma generate
 
 # Expose the service's port
 EXPOSE 4001
