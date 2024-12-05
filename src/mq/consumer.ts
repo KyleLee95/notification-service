@@ -1,6 +1,7 @@
 import amqp from "amqplib";
 import { sendEmail } from "../aws/ses";
 import { findUsersByUserId } from "../aws/cognito";
+
 const rabbitmqHost =
   process.env.DEV === "TRUE" ? "localhost" : process.env.RABBITMQ_HOST;
 const connectionString = `amqp://${rabbitmqHost}:5672`;
@@ -8,82 +9,102 @@ const connectionString = `amqp://${rabbitmqHost}:5672`;
 async function startConsumer() {
   const connection = await amqp.connect(connectionString);
   const channel = await connection.createChannel();
-  const queues = [
-    {
-      exchange: "notification-exchange",
-      name: "watchlist-match-queue",
-      routingKey: "watchlist.match",
-      exchangeType: "direct",
-    },
-    {
-      exchange: "notification-exchange",
-      name: "new-bid-queue",
-      routingKey: "bid.new",
-      exchangeType: "direct",
-    },
-    {
-      exchange: "auction-exchange",
-      name: "auction-ending-soon-queue",
-      routingKey: "auction.time",
-      exchangeType: "x-delayed-message",
-    },
-  ];
 
-  for (const queue of queues) {
-    await channel.assertExchange(queue.exchange, queue.exchangeType, {
-      durable: true,
-    });
-    await channel.assertQueue(queue.name, { durable: true });
-    await channel.bindQueue(queue.name, queue.exchange, queue.routingKey);
+  const notificationExchange = "notification-exchange";
+  const notificationExchangeType = "direct";
 
-    channel.consume(queue.name, async (msg) => {
-      try {
-        if (msg) {
-          const data = JSON.parse(msg.content.toString());
-          const { eventType, userIds, auction } = data;
-          const userEmails = await findUsersByUserId(userIds);
-          console.log("EVENT_TYPE", eventType);
-          switch (eventType) {
-            case "NOTIFY_WATCHLIST_MATCH":
-              if (!userEmails) {
-                return null;
-              }
-              await sendEmail(
-                userEmails,
-                "A new auction matching your watchlist critera has been posted",
-                `${auction.id}`,
-              );
-              break;
-            case "NEW_BID":
-              if (!userEmails) {
-                return null;
-              }
-              await sendEmail(
-                userEmails,
-                `You've been outbid on ${auction.title}!`,
-                "test",
-              );
+  //watchlist
+  const watchlistMatchQueue = "watchlist-match-queue";
+  const watchlistMatchRoutingKey = "watchlist.match";
+  await channel.assertExchange(notificationExchange, notificationExchangeType, {
+    durable: true,
+  });
 
-              break;
-            case "AUCTION_TIME_REMAINING":
-              if (!userEmails) {
-                return null;
-              }
-              await sendEmail(
-                userEmails,
-                "An auction you're watching is ending soon!",
-                `${auction.id}`,
-              );
-              break;
-            default:
-              break;
-          }
-        }
-      } catch (error) {
-        console.error(error);
+  //watchlist match
+  await channel.assertQueue(watchlistMatchQueue, { durable: true });
+  await channel.bindQueue(
+    watchlistMatchQueue,
+    notificationExchange,
+    watchlistMatchRoutingKey,
+  );
+  channel.consume(watchlistMatchQueue, async (msg) => {
+    try {
+      const data = JSON.parse(msg.content.toString());
+      const { eventType, userIds, auction } = data;
+      const userEmails = await findUsersByUserId(userIds);
+      if (!userEmails) {
+        return null;
       }
-      channel.ack(msg);
-    });
-  }
+      await sendEmail(
+        userEmails,
+        "A new auction matching your watchlist critera has been posted",
+        `${auction.id}`,
+      );
+    } catch (err) {
+      console.error(err);
+    }
+
+    channel.ack(msg);
+  });
+
+  //new bid
+
+  const newBidQueue = "new-bid-queue";
+  const newBidRoutingKey = "bid.new";
+  await channel.assertExchange(notificationExchange, notificationExchangeType, {
+    durable: true,
+  });
+  await channel.assertQueue(newBidQueue, { durable: true });
+  await channel.bindQueue(newBidQueue, notificationExchange, newBidRoutingKey);
+
+  channel.consume(newBidQueue, async (msg) => {
+    try {
+      const data = JSON.parse(msg.content.toString());
+      const { eventType, userIds, auction } = data;
+      const userEmails = await findUsersByUserId(userIds);
+      if (!userEmails) {
+        return null;
+      }
+      await sendEmail(
+        userEmails,
+        `You've been outbid on ${auction.title}!`,
+        "test",
+      );
+    } catch (err) {
+      console.error(err);
+    }
+
+    channel.ack(msg);
+  });
+
+  //auction exchange
+  const auctionExchange = "auction-exchange";
+  const auctionExchangeType = "x-delayed-message";
+  const auctionTimeRemainingQueue = "auction-time-remaining-queue";
+  const auctionRoutingKey = "auction.time";
+  await channel.assertExchange(auctionExchange, auctionExchangeType, {
+    durable: true,
+  });
+  await channel.assertQueue(auctionTimeRemainingQueue, { durable: true });
+  await channel.bindQueue(
+    auctionTimeRemainingQueue,
+    auctionExchange,
+    auctionRoutingKey,
+  );
+
+  channel.consume(auctionTimeRemainingQueue, async (msg) => {
+    const data = JSON.parse(msg.content.toString());
+    const { eventType, userIds, auction } = data;
+    const userEmails = await findUsersByUserId(userIds);
+    if (!userEmails) {
+      return null;
+    }
+    await sendEmail(
+      userEmails,
+      "An auction you're watching is ending soon!",
+      `${auction.id}`,
+    );
+    channel.ack(msg);
+  });
 }
 export { startConsumer };

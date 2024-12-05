@@ -9,10 +9,10 @@ const server = Fastify({
   logger: true,
 });
 
-async function main() {
+function main() {
   const PORT = process.env.PORT || 4001;
-
   startConsumer().catch(console.error);
+
   server.get("/healthcheck", (request, reply) => {
     reply.send({ hello: "world" }).status(200);
   });
