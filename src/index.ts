@@ -11,7 +11,9 @@ const server = Fastify({
 
 function main() {
   const PORT = process.env.PORT || 4001;
-  startConsumers().catch(console.error);
+  startConsumers().catch((error) => {
+    console.error("Failed to start consumers", error);
+  });
 
   server.get("/healthcheck", (request, reply) => {
     reply.send({ hello: "world" }).status(200);
