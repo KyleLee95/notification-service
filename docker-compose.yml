@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-container
+    ports:
+      - "4001:4001"
+    environment:
+      - NODE_ENV=production
+      - DEV=FALSE
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+  rabbitmq:
+    image: masstransit/rabbitmq
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - ./initmq/definitions.json:/etc/rabbitmq/definitions:ro
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

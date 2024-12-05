@@ -4,8 +4,9 @@
 
 Clone the repo and then run the following:
 
-```bash
+### Building the Project
 
+```bash
 cd path/to/this/repo
 
 npm install # or pnpm install
@@ -16,6 +17,27 @@ npm run start # to start the server in production mode
 ```
 
 The server should start on `localhost:4001`.
+
+**To build in a docker container run the following command from the root
+directory of this repository:**
+
+```bash
+
+# without docker compose
+docker build -t notification-service:latest .
+docker run -p 4001:4001 notification-service:latest .
+
+# with docker compose
+docker compose up --build
+```
+
+The docker compose command will build this project _AND_ containers it depends
+on (_rabbitmq_)
+
+You'll also want to **seed the database** with some test data.
+Do this by running `npm run seed` in the **root** directory of this repository.
+
+### Setting Environment Variables
 
 You'll also need to set the environment variables in a `.env` file in the root directory.
 You can check the `.env.example` file for a list of environment variables. Of
