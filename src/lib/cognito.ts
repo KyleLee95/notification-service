@@ -7,15 +7,20 @@ const cognitoClient = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION,
 });
 
-async function findUsersByUserId(watchlistUsers: any[]) {
+async function findUsersByUserId(watchlistUserIds: any[]) {
   const matchedUsers = [];
+  const realUsers = ["c1bba5c0-b001-7085-7a2e-e74d5399c3d1"];
 
-  for (const user of watchlistUsers) {
+  for (const userId of watchlistUserIds) {
+    if (!realUsers.includes(userId)) {
+      continue;
+    }
     try {
       // Query Cognito by email
       const command = new AdminGetUserCommand({
-        UserPoolId: process.env.AWS_COGNITO_USERPOOL_ID,
-        Username: user.userId, // Use `sub` or `username`
+        UserPoolId:
+          process.env.AWS_COGNITO_USERPOOL_ID || "us-east-2_gyo9HVnEr",
+        Username: userId, // Use `sub` or `username`
       });
 
       const response = await cognitoClient.send(command);
@@ -31,15 +36,14 @@ async function findUsersByUserId(watchlistUsers: any[]) {
         const email = emailAttribute?.Value;
 
         matchedUsers.push(email);
-        console.log(matchedUsers);
       }
     } catch (error) {
-      console.error(`Error fetching the email for ${user.userId}`);
+      console.error(`Error fetching the email for ${userId}`);
 
       console.error(error);
     }
   }
-
+  console.log("matched?", matchedUsers);
   return matchedUsers;
 }
 

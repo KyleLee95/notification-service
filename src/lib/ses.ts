@@ -24,7 +24,7 @@ async function sendEmail(to: string[], subject: string, body: string) {
         },
         Subject: { Data: subject },
       },
-      Source: process.env.SENDER_EMAIL || "kyle@kylelee.dev", // Verified sender email
+      Source: process.env.SENDER_EMAIL! || "kyle@kylelee.dev", // Verified sender email
     };
 
     const command = new SendEmailCommand(params);

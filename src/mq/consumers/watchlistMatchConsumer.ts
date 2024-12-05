@@ -2,6 +2,15 @@ import { createChannel, setupExchange, setupQueue } from "../rabbitmq";
 import { sendEmail } from "../../lib/ses";
 import { findUsersByUserId } from "../../lib/cognito";
 
+const generateEmailBody = (auction) => {
+  return `<p>A new auction <strong>${auction.title}</strong> was posted!</p>
+	<p>
+		<a href="localhost:5173/auctions/${auction.id}" target="_blank">
+			Click here to check it out!
+		</a>
+	</p>`;
+};
+
 export async function watchlistMatchConsumer() {
   const { channel } = await createChannel();
   const exchange = "notification-exchange";
@@ -23,7 +32,7 @@ export async function watchlistMatchConsumer() {
           await sendEmail(
             userEmails,
             "A new auction matching your watchlist criteria has been posted",
-            `${auction.id}`,
+            generateEmailBody(auction),
           );
         }
       } catch (err) {

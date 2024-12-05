@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
-import { sendEmail } from "./lib/ses";
 const envFile = process.env.DEV ? "../.env" : ".";
 dotenv.configDotenv({ path: envFile });
+
+import { sendEmail } from "./lib/ses";
 
 import Fastify from "fastify";
 import { startConsumers } from "./mq/consumers/index";
@@ -41,7 +42,6 @@ function main() {
       console.error(err);
     }
   });
-
   server.listen({ port: PORT as number }, (err, address) => {
     if (err) {
       server.log.error(err);
