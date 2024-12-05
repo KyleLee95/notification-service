@@ -3,7 +3,7 @@ const envFile = process.env.DEV ? "../.env" : ".";
 dotenv.configDotenv({ path: envFile });
 
 import Fastify from "fastify";
-import { startConsumer } from "./mq/consumer";
+import { startConsumers } from "./mq/consumers/index";
 
 const server = Fastify({
   logger: true,
@@ -11,7 +11,7 @@ const server = Fastify({
 
 function main() {
   const PORT = process.env.PORT || 4001;
-  startConsumer().catch(console.error);
+  startConsumers().catch(console.error);
 
   server.get("/healthcheck", (request, reply) => {
     reply.send({ hello: "world" }).status(200);
