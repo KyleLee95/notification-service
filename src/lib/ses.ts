@@ -1,19 +1,21 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 
 // Load environment variables
-const sesClient = new SESClient({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+const sesClient = new SESClient([
+  {
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID,
+    },
   },
-});
+]);
 
-async function sendEmail(to: string, subject: string, body: string) {
+async function sendEmail(to: string[], subject: string, body: string) {
   try {
     const params = {
       Destination: {
-        ToAddresses: [to], // Recipient email
+        ToAddresses: to, // Recipient email
       },
       Message: {
         Body: {
@@ -22,7 +24,7 @@ async function sendEmail(to: string, subject: string, body: string) {
         },
         Subject: { Data: subject },
       },
-      Source: process.env.SENDER_EMAIL!, // Verified sender email
+      Source: process.env.SENDER_EMAIL || "kyle@kylelee.dev", // Verified sender email
     };
 
     const command = new SendEmailCommand(params);
