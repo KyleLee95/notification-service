@@ -26,7 +26,7 @@ function main() {
         to,
         subject,
         content,
-      }: { to: string; subject: string; content: string } = request.body;
+      }: { to: string[]; subject: string; content: string } = request.body;
 
       const emailToSend = await sendEmail(to, subject, content);
       if (!emailToSend.MessageId) {
