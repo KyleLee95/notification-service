@@ -13,9 +13,14 @@ const server = Fastify({
 
 function main() {
   const PORT = process.env.PORT || 4001;
-  startConsumers().catch((error) => {
-    console.error("Failed to start consumers", error);
-  });
+
+  startConsumers()
+    .then((data) => {
+      console.log("All consumers in the notification service started");
+    })
+    .catch((error) => {
+      console.error("Failed to start consumers", error);
+    });
 
   server.get("/healthcheck", (request, reply) => {
     reply.send({ hello: "world" }).status(200);
@@ -23,11 +28,7 @@ function main() {
 
   server.post("/api/notifications/sendEmail", async (request, reply) => {
     try {
-      const {
-        to,
-        subject,
-        content,
-      }: { to: string[]; subject: string; content: string } = request.body;
+      const { to, subject, content } = request.body;
 
       const emailToSend = await sendEmail(to, subject, content);
       if (!emailToSend.MessageId) {
@@ -42,6 +43,7 @@ function main() {
       console.error(err);
     }
   });
+
   server.listen({ port: PORT as number }, (err, address) => {
     if (err) {
       server.log.error(err);
