@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 const envFile = process.env.DEV ? "../.env" : ".";
 dotenv.configDotenv({ path: envFile });
-
 import { sendEmail } from "./lib/ses";
 
 import Fastify from "fastify";
@@ -44,14 +43,24 @@ function main() {
     }
   });
 
-  server.listen({ port: PORT as number }, (err, address) => {
-    if (err) {
-      server.log.error(err);
-      process.exit(1);
-    }
+  server.listen(
+    {
+      port: PORT as number,
+      host: "0.0.0.0",
 
-    console.log(`Server started at ${address}`);
-  });
+      listenTextResolver: (address) => {
+        return `notification-service server is listening at ${address}`;
+      },
+    },
+    (err, address) => {
+      if (err) {
+        server.log.error(err);
+        process.exit(1);
+      }
+
+      console.log(`Server started at ${address}`);
+    },
+  );
 }
 
 main();

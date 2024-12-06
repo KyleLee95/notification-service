@@ -5,13 +5,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app-container
+    container_name: notification-service
     ports:
       - "4001:4001"
     environment:
       - NODE_ENV=production
       - DEV=FALSE
       - RABBITMQ_HOST=rabbitmq
+    env_file:
+      - .env
     depends_on:
       - rabbitmq
     networks:

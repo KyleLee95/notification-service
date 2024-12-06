@@ -12,7 +12,6 @@ RUN npm install
 
 # Copy the rest of the source code
 COPY . .
-COPY .env .
 
 
 # Expose the service's port
