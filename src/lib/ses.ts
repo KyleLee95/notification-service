@@ -1,15 +1,14 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import dotenv from "dotenv";
-const envFile = process.env.DEV ? "../../.env" : "../../.";
-dotenv.configDotenv({ path: envFile });
 // Load environment variables
-const sesClient = new SESClient({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID!,
+const sesClient = new SESClient([
+  {
+    region: "us-east-2",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID!,
+    },
   },
-});
+]);
 
 async function sendEmail(to: string[], subject: string, body: string) {
   try {
