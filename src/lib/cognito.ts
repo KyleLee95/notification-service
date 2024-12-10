@@ -14,8 +14,7 @@ async function findUsersByUserId(watchlistUserIds: any[]) {
     try {
       // Query Cognito by email
       const command = new AdminGetUserCommand({
-        UserPoolId:
-          process.env.AWS_COGNITO_USERPOOL_ID || "us-east-2_gyo9HVnEr",
+        UserPoolId: process.env.AWS_COGNITO_USERPOOL_ID,
         Username: userId, // Use `sub` or `username`
       });
 

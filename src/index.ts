@@ -1,6 +1,4 @@
-import dotenv from "dotenv";
-const envFile = process.env.DEV ? "../.env" : ".";
-dotenv.configDotenv({ path: envFile });
+import "dotenv/config";
 import { sendEmail } from "./lib/ses";
 
 import Fastify from "fastify";
@@ -11,7 +9,7 @@ const server = Fastify({
 });
 
 function main() {
-  const PORT = process.env.PORT || 4001;
+  const PORT = Number(process.env.PORT) || 4001;
 
   startConsumers()
     .then((data) => {
@@ -45,7 +43,7 @@ function main() {
 
   server.listen(
     {
-      port: PORT as number,
+      port: PORT,
       host: "0.0.0.0",
 
       listenTextResolver: (address) => {

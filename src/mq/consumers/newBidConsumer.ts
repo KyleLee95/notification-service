@@ -41,6 +41,7 @@ export async function newBidConsumer() {
         const data = JSON.parse(msg.content.toString());
         const { userIds, auction, sellerId } = data;
 
+        console.log("userIds", userIds);
         const userEmails = await findUsersByUserId(userIds);
         if (userEmails) {
           await sendEmail(
