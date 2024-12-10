@@ -25,8 +25,8 @@ function main() {
 
   server.post("/api/notifications/sendEmail", async (request, reply) => {
     try {
+      console.log("to?", to);
       const { to, subject, content } = request.body;
-
       const emailToSend = await sendEmail(to, subject, content);
       if (!emailToSend.MessageId) {
         reply
