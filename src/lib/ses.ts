@@ -1,5 +1,6 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 // Load environment variables
+
 const sesClient = new SESClient([
   {
     region: "us-east-2",

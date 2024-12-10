@@ -3,21 +3,14 @@ import {
   AdminGetUserCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 
-import dotenv from "dotenv";
-const envFile = process.env.DEV ? "../../.env" : "../../.";
-dotenv.configDotenv({ path: envFile });
 const cognitoClient = new CognitoIdentityProviderClient({
   region: "us-east-2",
 });
 
 async function findUsersByUserId(watchlistUserIds: any[]) {
   const matchedUsers = [];
-  // const realUsers = ["c1bba5c0-b001-7085-7a2e-e74d5399c3d1"];
 
   for (const userId of watchlistUserIds) {
-    // if (!realUsers.includes(userId)) {
-    //   continue;
-    // }
     try {
       // Query Cognito by email
       const command = new AdminGetUserCommand({
