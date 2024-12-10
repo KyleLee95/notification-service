@@ -27,7 +27,7 @@ function main() {
   server.post("/api/notifications/sendEmail", async (request, reply) => {
     try {
       const { to, subject, content } = request.body;
-      const userEmail = findUsersByUserId(to);
+      const userEmail = await findUsersByUserId(to);
       const emailToSend = await sendEmail(userEmail, subject, content);
       if (!emailToSend.MessageId) {
         reply
