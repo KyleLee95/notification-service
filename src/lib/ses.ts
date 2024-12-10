@@ -1,12 +1,17 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 // Load environment variables
 
+// ADMIN_USERID=c1bba5c0-b001-7085-7a2e-e74d5399c3d1
+const AWS_ACCESS_KEY_ID = "AKIAQFC27RBPVG5N6T2B";
+const AWS_SECRET_ACCESS_KEY_ID = "8Tg/0Fm1z6nVfuO6Ykt3I8vpjOGEeiriZ55lzQST";
+// AWS_REGION=us-east-2
+// AWS_COGNITO_USERPOOL_ID=us-east-2_gyo9HVnEr
 const sesClient = new SESClient([
   {
     region: "us-east-2",
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID,
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY_ID,
     },
   },
 ]);
