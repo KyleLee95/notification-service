@@ -3,6 +3,7 @@ import { sendEmail } from "./lib/ses";
 
 import Fastify from "fastify";
 import { startConsumers } from "./mq/consumers/index";
+import { findUsersByUserId } from "./lib/cognito";
 
 const server = Fastify({
   logger: true,
@@ -26,8 +27,8 @@ function main() {
   server.post("/api/notifications/sendEmail", async (request, reply) => {
     try {
       const { to, subject, content } = request.body;
-      console.log("to?", to);
-      const emailToSend = await sendEmail(to, subject, content);
+      const userEmail = findUsersByUserId(to);
+      const emailToSend = await sendEmail(userEmail, subject, content);
       if (!emailToSend.MessageId) {
         reply
           .send({
