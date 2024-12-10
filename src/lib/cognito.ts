@@ -5,6 +5,10 @@ import {
 
 const cognitoClient = new CognitoIdentityProviderClient({
   region: "us-east-2",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID!,
+  },
 });
 
 async function findUsersByUserId(watchlistUserIds: any[]) {
@@ -15,7 +19,7 @@ async function findUsersByUserId(watchlistUserIds: any[]) {
       // Query Cognito by email
       const command = new AdminGetUserCommand({
         UserPoolId: "us-east-2_gyo9HVnEr",
-        Username: userId, // Use `sub` or `username`
+        Username: "c1bba5c0-b001-7085-7a2e-e74d5399c3d1", // Use `sub` or `username`
       });
 
       const response = await cognitoClient.send(command);
