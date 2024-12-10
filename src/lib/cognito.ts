@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 const envFile = process.env.DEV ? "../../.env" : "../../.";
 dotenv.configDotenv({ path: envFile });
 const cognitoClient = new CognitoIdentityProviderClient({
-  region: process.env.AWS_REGION,
+  region: "us-east-2",
 });
 
 async function findUsersByUserId(watchlistUserIds: any[]) {
