@@ -19,7 +19,7 @@ async function findUsersByUserId(watchlistUserIds: any[]) {
       // Query Cognito by email
       const command = new AdminGetUserCommand({
         UserPoolId: "us-east-2_gyo9HVnEr",
-        Username: "c1bba5c0-b001-7085-7a2e-e74d5399c3d1", // Use `sub` or `username`
+        Username: userId, // Use `sub` or `username`
       });
 
       const response = await cognitoClient.send(command);
